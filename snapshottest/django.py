@@ -17,36 +17,13 @@ class TestRunnerMixin(object):
 
     @classmethod
     def add_arguments(cls, parser):
-        super(TestRunnerMixin, cls).add_arguments(parser)
-        parser.add_argument(
-            "--snapshot-update",
-            default=False,
-            action="store_true",
-            dest="snapshot_update",
-            help="Update the snapshots automatically.",
-        )
+        pass
 
     def run_tests(self, test_labels, extra_tests=None, **kwargs):
-        result = super(TestRunnerMixin, self).run_tests(
-            test_labels=test_labels, extra_tests=extra_tests, **kwargs
-        )
-        self.print_report()
-        if TestCase.snapshot_should_update:
-            for module in SnapshotModule.get_modules():
-                module.delete_unvisited()
-                module.save()
-
-        return result
+        pass
 
     def print_report(self):
-        lines = list(reporting_lines("python manage.py test"))
-        if lines:
-            print("\n" + self.separator1)
-            print("SnapshotTest summary")
-            print(self.separator2)
-            for line in lines:
-                print(line)
-            print(self.separator1)
+        pass
 
 
 class TestRunner(TestRunnerMixin, DiscoverRunner):

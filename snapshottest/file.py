@@ -46,10 +46,10 @@ class FileSnapshotFormatter(BaseFormatter):
         return FileSnapshot(relative_snapshot_filename)
 
     def get_imports(self):
-        return (("snapshottest.file", "FileSnapshot"),)
+        pass
 
     def format(self, value, indent, formatter):
-        return repr(value)
+        pass
 
     def assert_value_matches_snapshot(
         self, test, test_value, snapshot_value, formatter

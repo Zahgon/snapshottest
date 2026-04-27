@@ -7,20 +7,7 @@ from .reporting import reporting_lines, diff_report
 
 
 def pytest_addoption(parser):
-    group = parser.getgroup("snapshottest")
-    group.addoption(
-        "--snapshot-update",
-        action="store_true",
-        default=False,
-        dest="snapshot_update",
-        help="Update the snapshots.",
-    )
-    group.addoption(
-        "--snapshot-verbose",
-        action="store_true",
-        default=False,
-        help="Dump diagnostic and progress information.",
-    )
+    pass
 
 
 class PyTestSnapshotTest(SnapshotTest):
@@ -30,23 +17,15 @@ class PyTestSnapshotTest(SnapshotTest):
 
     @property
     def module(self):
-        return SnapshotModule.get_module_for_testpath(self.request.node.fspath.strpath)
+        pass
 
     @property
     def update(self):
-        return self.request.config.option.snapshot_update
+        pass
 
     @property
     def test_name(self):
-        cls_name = getattr(self.request.node.cls, "__name__", "")
-        flattened_node_name = re.sub(
-            r"\s+", " ", self.request.node.name.replace(r"\n", " ")
-        )
-        return "{}{} {}".format(
-            "{}.".format(cls_name) if cls_name else "",
-            flattened_node_name,
-            self.curr_snapshot,
-        )
+        pass
 
 
 class SnapshotSession(object):
@@ -55,38 +34,25 @@ class SnapshotSession(object):
         self.config = config
 
     def display(self, tr):
-        if not SnapshotModule.has_snapshots():
-            return
-
-        tr.write_sep("=", "SnapshotTest summary")
-
-        for line in reporting_lines("pytest"):
-            tr.write_line(line)
+        pass
 
 
 def pytest_assertrepr_compare(op, left, right):
-    if isinstance(left, PrettyDiff) and op == "==":
-        return diff_report(left, right)
+    pass
 
 
 @pytest.fixture
 def snapshot(request):
-    with PyTestSnapshotTest(request) as snapshot_test:
-        yield snapshot_test
+    pass
 
 
 def pytest_terminal_summary(terminalreporter):
-    if terminalreporter.config.option.snapshot_update:
-        for module in SnapshotModule.get_modules():
-            module.delete_unvisited()
-            module.save()
-
-    terminalreporter.config._snapshotsession.display(terminalreporter)
+    pass
 
 
 # force the other plugins to initialise first
 # (fixes issue with capture not being properly initialised)
 @pytest.mark.trylast
 def pytest_configure(config):
-    config._snapshotsession = SnapshotSession(config)
+    pass
     # config.pluginmanager.register(bs, "snapshottest")

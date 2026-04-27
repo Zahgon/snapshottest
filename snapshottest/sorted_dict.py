@@ -19,12 +19,4 @@ class SortedDict(OrderedDict):
                 self[key] = value
 
     def _sort_list(self, value):
-        def sort(val):
-            if isinstance(val, dict):
-                return SortedDict(val)
-            elif isinstance(val, list):
-                return self._sort_list(val)
-            else:
-                return val
-
-        return [sort(item) for item in value]
+        pass

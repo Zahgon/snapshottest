@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 def _escape_quotes(text):
-    return text.replace("'", "\\'")
+    pass
 
 
 def _load_source(module_name, filepath):
@@ -31,13 +31,7 @@ def _load_source(module_name, filepath):
     This approach has been also encouraged in the official mailing lists:
     https://discuss.python.org/t/how-do-i-migrate-from-imp/27885 
     """
-    spec = importlib.util.spec_from_file_location(module_name, filepath)
-    module = importlib.util.module_from_spec(spec)
-    # As a performance optimization, store loaded module for further use.
-    # https://docs.python.org/3.11/library/sys.html#sys.modules
-    sys.modules[module_name] = module
-    spec.loader.exec_module(module)
-    return module
+    pass
 
 
 class SnapshotModule(object):
@@ -56,43 +50,25 @@ class SnapshotModule(object):
         self.imports["snapshottest"].add("Snapshot")
 
     def load_snapshots(self):
-        try:
-            source = _load_source(self.module, self.filepath)
-        # except FileNotFoundError:  # Python 3
-        except (IOError, OSError) as err:
-            if err.errno == errno.ENOENT:
-                return Snapshot()
-            else:
-                raise
-        else:
-            assert isinstance(source.snapshots, Snapshot)
-            return source.snapshots
+        pass
 
     def visit(self, snapshot_name):
         self.visited_snapshots.add(snapshot_name)
 
     def delete_unvisited(self):
-        for unvisited in self.unvisited_snapshots:
-            del self.snapshots[unvisited]
+        pass
 
     @property
     def unvisited_snapshots(self):
-        return set(self.snapshots.keys()) - self.visited_snapshots
+        pass
 
     @classmethod
     def total_unvisited_snapshots(cls):
-        unvisited_snapshots = 0
-        unvisited_modules = 0
-        for module in cls.get_modules():
-            unvisited_snapshot_len = len(module.unvisited_snapshots)
-            unvisited_snapshots += unvisited_snapshot_len
-            unvisited_modules += min(unvisited_snapshot_len, 1)
-
-        return unvisited_snapshots, unvisited_modules
+        pass
 
     @classmethod
     def get_modules(cls):
-        return SnapshotModule._snapshot_modules.values()
+        pass
 
     @classmethod
     def stats_for_module(cls, getter):
@@ -129,19 +105,15 @@ class SnapshotModule(object):
 
     @classmethod
     def has_snapshots(cls):
-        return cls.stats_visited_snapshots()[0] > 0
+        pass
 
     @property
     def original_snapshot(self):
-        if not self._original_snapshot:
-            self._original_snapshot = self.load_snapshots()
-        return self._original_snapshot
+        pass
 
     @property
     def snapshots(self):
-        if not self._snapshots:
-            self._snapshots = Snapshot(self.original_snapshot)
-        return self._snapshots
+        pass
 
     def __getitem__(self, test_name):
         try:
@@ -160,85 +132,25 @@ class SnapshotModule(object):
 
     @property
     def snapshot_dir(self):
-        return os.path.dirname(self.filepath)
+        pass
 
     def save(self):
-        if self.original_snapshot == self.snapshots:
-            # If there are no changes, we do nothing
-            return
-
-        # Create the snapshot dir in case doesn't exist
-        try:
-            os.makedirs(self.snapshot_dir, 0o0700)
-        except (IOError, OSError):
-            pass
-
-        # Create __init__.py in case doesn't exist
-        open(os.path.join(self.snapshot_dir, "__init__.py"), "a").close()
-
-        pretty = Formatter(self.imports)
-
-        with codecs.open(self.filepath, "w", encoding="utf-8") as snapshot_file:
-            snapshots_declarations = [
-                """snapshots['{}'] = {}""".format(
-                    _escape_quotes(key), pretty(self.snapshots[key])
-                )
-                for key in sorted(self.snapshots.keys())
-            ]
-
-            imports = "\n".join(
-                [
-                    "from {} import {}".format(
-                        module, ", ".join(sorted(module_imports))
-                    )
-                    for module, module_imports in sorted(self.imports.items())
-                ]
-            )
-            file_data = """# -*- coding: utf-8 -*-
-# snapshottest: v1 - https://goo.gl/zC4yUc
-from __future__ import unicode_literals
-
-{}
-
-
-snapshots = Snapshot()
-
-{}
-""".format(
-                imports, "\n\n".join(snapshots_declarations)
-            )
-            snapshot_file.write(self._apply_callbacks(file_data))
+        pass
 
     def _apply_callbacks(self, data):
-        for callback in self._before_write_callbacks:
-            data = callback(data)
-        return data
+        pass
 
     @classmethod
     def get_module_for_testpath(cls, test_filepath):
-        if test_filepath not in cls._snapshot_modules:
-            dirname = os.path.dirname(test_filepath)
-            snapshot_dir = os.path.join(dirname, "snapshots")
-
-            snapshot_basename = "snap_{}.py".format(
-                os.path.splitext(os.path.basename(test_filepath))[0]
-            )
-            snapshot_filename = os.path.join(snapshot_dir, snapshot_basename)
-            snapshot_module = "{}".format(os.path.splitext(snapshot_basename)[0])
-
-            cls._snapshot_modules[test_filepath] = SnapshotModule(
-                snapshot_module, snapshot_filename
-            )
-
-        return cls._snapshot_modules[test_filepath]
+        pass
 
     @classmethod
     def register_before_file_write_callback(cls, callback):
-        cls._before_write_callbacks.append(callback)
+        pass
 
     @classmethod
     def clear_before_file_write_callbacks(cls):
-        cls._before_write_callbacks.clear()
+        pass
 
 
 class SnapshotTest(object):
@@ -254,7 +166,7 @@ class SnapshotTest(object):
 
     @property
     def update(self):
-        return False
+        pass
 
     @property
     def test_name(self):
@@ -309,7 +221,7 @@ class SnapshotTest(object):
             self.snapshot_counter += 1
 
     def save_changes(self):
-        self.module.save()
+        pass
 
 
 def assert_match_snapshot(value, name=""):
